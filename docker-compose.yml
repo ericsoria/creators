@@ -1,0 +1,50 @@
+services:
+    nginx:
+      build:
+        context: .
+        dockerfile: etc/nginx/Dockerfile
+      container_name: nginx
+      volumes: 
+        - ./src:/app
+      working_dir: /app
+      ports:
+        - "80:80"
+    php-node:
+      build:
+        args:
+          user: eric
+          uid: 501
+        context: .
+        dockerfile: etc/php/Dockerfile
+      volumes: 
+        - ./src:/app
+        - ./etc/storage/public:/app/storage/app/public
+      container_name: php
+      working_dir: /app
+      ports:
+        - "8000:8000"
+        - "5173:5173"
+
+    postgres:
+      image: postgres:18
+      container_name: postgres
+      restart: always
+      volumes:
+        - ./etc/postgres/data:/var/lib/postgresql/18/docker
+        - ./etc/postgres/conf/postgresql.conf:/etc/postgresql/postgresql.conf:ro
+        - ./etc/postgres/conf/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
+      environment:
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=secret
+        - POSTGRES_DB=creators
+        - POSTGRES_NON_ROOT_USER=creators_user
+        - POSTGRES_NON_ROOT_PASSWORD=secret
+      ports:
+        - "5432:5432"
+      command: [ "postgres", "-c", "config_file=/etc/postgresql/postgresql.conf" ]
+
+    redis:
+      image: redis:latest
+      container_name: redis
+      ports:
+        - "6379:6379"

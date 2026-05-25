@@ -1,0 +1,59 @@
+# =========================
+# Root .gitignore
+# =========================
+
+# -------------------------
+# OS / Editor
+# -------------------------
+.DS_Store
+Thumbs.db
+
+.vscode/
+.idea/
+
+# -------------------------
+# Logs
+# -------------------------
+*.log
+
+# -------------------------
+# Environment files
+# -------------------------
+.env
+.env.*
+
+# -------------------------
+# Docker overrides
+# -------------------------
+docker-compose.override.yml
+
+# -------------------------
+# Node modules (si existen fuera de src)
+# -------------------------
+node_modules/
+
+# -------------------------
+# Temp files
+# -------------------------
+tmp/
+temp/
+*.tmp
+
+# =========================
+# Postgres
+# =========================
+
+# Ignorar contenido pero mantener carpetas
+etc/postgres/data/*
+!etc/postgres/data/.gitkeep
+
+etc/postgres/dump/*
+!etc/postgres/dump/.gitkeep
+
+# =========================
+# Storage
+# =========================
+
+# Ignorar archivos públicos generados
+etc/storage/public/*
+!etc/storage/public/.gitkeep
