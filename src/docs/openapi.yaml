@@ -1,0 +1,1196 @@
+openapi: 3.1.0
+info:
+  title: Creators Internal API
+  version: 0.2.0
+  description: Internal API foundation for creator collaboration operations.
+servers:
+  - url: http://localhost/api/v1
+security:
+  - sanctumBearer: []
+paths:
+  /user:
+    get:
+      summary: Get current authenticated user
+      operationId: getCurrentUser
+      security:
+        - sanctumBearer: []
+      responses:
+        '200':
+          description: Current user returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /cities:
+    get:
+      summary: List cities
+      operationId: listCities
+      security:
+        - sanctumBearer: []
+      responses:
+        '200':
+          description: Cities returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/City'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /tags:
+    get:
+      summary: List tags
+      operationId: listTags
+      security:
+        - sanctumBearer: []
+      responses:
+        '200':
+          description: Tags returned.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [data]
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Tag'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      summary: Create tag
+      operationId: createTag
+      security:
+        - sanctumBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TagInput'
+      responses:
+        '201':
+          description: Tag created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TagResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /brands:
+    get:
+      summary: List brands
+      operationId: listBrands
+      security:
+        - sanctumBearer: []
+      parameters:
+        - $ref: '#/components/parameters/StatusFilter'
+        - $ref: '#/components/parameters/CityFilter'
+        - $ref: '#/components/parameters/TagFilter'
+        - $ref: '#/components/parameters/PerPageFilter'
+      responses:
+        '200':
+          description: Paginated brands returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BrandPaginatedResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    post:
+      summary: Create brand
+      operationId: createBrand
+      security:
+        - sanctumBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BrandInput'
+      responses:
+        '201':
+          description: Brand created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BrandResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /brands/{brand}:
+    get:
+      summary: Get brand
+      operationId: getBrand
+      security:
+        - sanctumBearer: []
+      parameters:
+        - $ref: '#/components/parameters/BrandPath'
+      responses:
+        '200':
+          description: Brand returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BrandResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      summary: Update brand
+      operationId: updateBrand
+      security:
+        - sanctumBearer: []
+      parameters:
+        - $ref: '#/components/parameters/BrandPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BrandInput'
+      responses:
+        '200':
+          description: Brand updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BrandResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      summary: Delete brand
+      operationId: deleteBrand
+      security:
+        - sanctumBearer: []
+      parameters:
+        - $ref: '#/components/parameters/BrandPath'
+      responses:
+        '204':
+          description: Brand soft deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /campaigns:
+    get:
+      summary: List campaigns
+      operationId: listCampaigns
+      security:
+        - sanctumBearer: []
+      parameters:
+        - $ref: '#/components/parameters/StatusFilter'
+        - $ref: '#/components/parameters/BrandFilter'
+        - $ref: '#/components/parameters/TagFilter'
+        - $ref: '#/components/parameters/StartsAtFilter'
+        - $ref: '#/components/parameters/EndsAtFilter'
+        - $ref: '#/components/parameters/PerPageFilter'
+      responses:
+        '200':
+          description: Paginated campaigns returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignPaginatedResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    post:
+      summary: Create campaign
+      operationId: createCampaign
+      security:
+        - sanctumBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CampaignInput'
+      responses:
+        '201':
+          description: Campaign created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /campaigns/{campaign}:
+    get:
+      summary: Get campaign
+      operationId: getCampaign
+      security:
+        - sanctumBearer: []
+      parameters:
+        - $ref: '#/components/parameters/CampaignPath'
+      responses:
+        '200':
+          description: Campaign returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      summary: Update campaign
+      operationId: updateCampaign
+      security:
+        - sanctumBearer: []
+      parameters:
+        - $ref: '#/components/parameters/CampaignPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CampaignInput'
+      responses:
+        '200':
+          description: Campaign updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CampaignResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      summary: Delete campaign
+      operationId: deleteCampaign
+      security:
+        - sanctumBearer: []
+      parameters:
+        - $ref: '#/components/parameters/CampaignPath'
+      responses:
+        '204':
+          description: Campaign soft deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /creator-leads:
+    get:
+      summary: List creator leads
+      operationId: listCreatorLeads
+      security:
+        - sanctumBearer: []
+      responses:
+        '200':
+          description: Paginated creator leads returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatorLeadPaginatedResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      summary: Create creator lead
+      operationId: createCreatorLead
+      security:
+        - sanctumBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatorLeadInput'
+      responses:
+        '201':
+          description: Creator lead created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatorLeadResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /creator-leads/{creator_lead}:
+    get:
+      summary: Get creator lead
+      operationId: getCreatorLead
+      security:
+        - sanctumBearer: []
+      parameters:
+        - $ref: '#/components/parameters/CreatorLeadPath'
+      responses:
+        '200':
+          description: Creator lead returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatorLeadResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      summary: Update creator lead
+      operationId: updateCreatorLead
+      security:
+        - sanctumBearer: []
+      parameters:
+        - $ref: '#/components/parameters/CreatorLeadPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatorLeadInput'
+      responses:
+        '200':
+          description: Creator lead updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatorLeadResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      summary: Delete creator lead
+      operationId: deleteCreatorLead
+      security:
+        - sanctumBearer: []
+      parameters:
+        - $ref: '#/components/parameters/CreatorLeadPath'
+      responses:
+        '204':
+          description: Creator lead soft deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /creator-leads/{creator_lead}/approve:
+    post:
+      summary: Approve creator lead
+      operationId: approveCreatorLead
+      security:
+        - sanctumBearer: []
+      parameters:
+        - $ref: '#/components/parameters/CreatorLeadPath'
+      responses:
+        '201':
+          description: Creator created from lead.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatorResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /creators:
+    get:
+      summary: List creators
+      operationId: listCreators
+      security:
+        - sanctumBearer: []
+      responses:
+        '200':
+          description: Paginated creators returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatorPaginatedResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      summary: Create creator
+      operationId: createCreator
+      security:
+        - sanctumBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatorInput'
+      responses:
+        '201':
+          description: Creator created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatorResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /creators/{creator}:
+    get:
+      summary: Get creator
+      operationId: getCreator
+      security:
+        - sanctumBearer: []
+      parameters:
+        - $ref: '#/components/parameters/CreatorPath'
+      responses:
+        '200':
+          description: Creator returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatorResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      summary: Update creator
+      operationId: updateCreator
+      security:
+        - sanctumBearer: []
+      parameters:
+        - $ref: '#/components/parameters/CreatorPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatorInput'
+      responses:
+        '200':
+          description: Creator updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreatorResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      summary: Delete creator
+      operationId: deleteCreator
+      security:
+        - sanctumBearer: []
+      parameters:
+        - $ref: '#/components/parameters/CreatorPath'
+      responses:
+        '204':
+          description: Creator soft deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /social-accounts:
+    get:
+      summary: List social accounts
+      operationId: listSocialAccounts
+      security:
+        - sanctumBearer: []
+      responses:
+        '200':
+          description: Paginated social accounts returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SocialAccountPaginatedResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    post:
+      summary: Create social account
+      operationId: createSocialAccount
+      security:
+        - sanctumBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SocialAccountInput'
+      responses:
+        '201':
+          description: Social account created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SocialAccountResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /social-accounts/{social_account}:
+    get:
+      summary: Get social account
+      operationId: getSocialAccount
+      security:
+        - sanctumBearer: []
+      parameters:
+        - $ref: '#/components/parameters/SocialAccountPath'
+      responses:
+        '200':
+          description: Social account returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SocialAccountResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      summary: Update social account
+      operationId: updateSocialAccount
+      security:
+        - sanctumBearer: []
+      parameters:
+        - $ref: '#/components/parameters/SocialAccountPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SocialAccountInput'
+      responses:
+        '200':
+          description: Social account updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SocialAccountResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      summary: Delete social account
+      operationId: deleteSocialAccount
+      security:
+        - sanctumBearer: []
+      parameters:
+        - $ref: '#/components/parameters/SocialAccountPath'
+      responses:
+        '204':
+          description: Social account soft deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  securitySchemes:
+    sanctumBearer:
+      type: http
+      scheme: bearer
+      bearerFormat: Sanctum token
+  parameters:
+    BrandPath:
+      name: brand
+      in: path
+      required: true
+      schema:
+        type: integer
+    CampaignPath:
+      name: campaign
+      in: path
+      required: true
+      schema:
+        type: integer
+    CreatorLeadPath:
+      name: creator_lead
+      in: path
+      required: true
+      schema:
+        type: integer
+    CreatorPath:
+      name: creator
+      in: path
+      required: true
+      schema:
+        type: integer
+    SocialAccountPath:
+      name: social_account
+      in: path
+      required: true
+      schema:
+        type: integer
+    StatusFilter:
+      name: status
+      in: query
+      required: false
+      schema:
+        type: string
+    BrandFilter:
+      name: brand
+      in: query
+      required: false
+      schema:
+        type: integer
+    CityFilter:
+      name: city
+      in: query
+      required: false
+      schema:
+        type: integer
+    TagFilter:
+      name: tag
+      in: query
+      required: false
+      schema:
+        type: integer
+    StartsAtFilter:
+      name: starts_at
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date
+    EndsAtFilter:
+      name: ends_at
+      in: query
+      required: false
+      schema:
+        type: string
+        format: date
+    PerPageFilter:
+      name: per_page
+      in: query
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+  responses:
+    Unauthorized:
+      description: The request is missing a valid authentication token.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [message]
+            properties:
+              message:
+                type: string
+                example: Unauthenticated.
+    NotFound:
+      description: The requested resource was not found.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [message]
+            properties:
+              message:
+                type: string
+                example: Not Found
+    ValidationError:
+      description: The request failed validation.
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [message, errors]
+            properties:
+              message:
+                type: string
+              errors:
+                type: object
+  schemas:
+    UserResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: '#/components/schemas/User'
+    TagResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: '#/components/schemas/Tag'
+    BrandResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: '#/components/schemas/Brand'
+    CampaignResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: '#/components/schemas/Campaign'
+    BrandPaginatedResponse:
+      type: object
+      required: [data, meta, links]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Brand'
+        meta:
+          type: object
+        links:
+          type: object
+    CampaignPaginatedResponse:
+      type: object
+      required: [data, meta, links]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Campaign'
+        meta:
+          type: object
+        links:
+          type: object
+    CreatorLeadResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: '#/components/schemas/CreatorLead'
+    CreatorResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: '#/components/schemas/Creator'
+    SocialAccountResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: '#/components/schemas/SocialAccount'
+    CreatorLeadPaginatedResponse:
+      type: object
+      required: [data, meta, links]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/CreatorLead'
+        meta:
+          type: object
+        links:
+          type: object
+    CreatorPaginatedResponse:
+      type: object
+      required: [data, meta, links]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Creator'
+        meta:
+          type: object
+        links:
+          type: object
+    SocialAccountPaginatedResponse:
+      type: object
+      required: [data, meta, links]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/SocialAccount'
+        meta:
+          type: object
+        links:
+          type: object
+    User:
+      type: object
+      required: [id, name, email, role]
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: Admin User
+        email:
+          type: string
+          format: email
+          example: admin@example.com
+        role:
+          type: string
+          enum: [admin, manager, operator, viewer]
+          example: admin
+    City:
+      type: object
+      required: [id, name, slug, country, timezone]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        slug:
+          type: string
+        country:
+          type: string
+        timezone:
+          type: string
+    Tag:
+      type: object
+      required: [id, name, slug, type]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        slug:
+          type: string
+        type:
+          type: string
+    TagInput:
+      type: object
+      required: [name, slug, type]
+      properties:
+        name:
+          type: string
+        slug:
+          type: string
+        type:
+          type: string
+    Brand:
+      type: object
+      required: [id, name, slug, status]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        slug:
+          type: string
+        industry:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        website_url:
+          type: string
+          nullable: true
+        status:
+          type: string
+        notes:
+          type: string
+          nullable: true
+        cities:
+          type: array
+          items:
+            $ref: '#/components/schemas/City'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+    BrandInput:
+      type: object
+      required: [name, slug]
+      properties:
+        name:
+          type: string
+        slug:
+          type: string
+        industry:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        website_url:
+          type: string
+          nullable: true
+        status:
+          type: string
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+        city_ids:
+          type: array
+          items:
+            type: integer
+        tag_ids:
+          type: array
+          items:
+            type: integer
+    CreatorLead:
+      type: object
+      required: [id, platform, handle, status]
+      properties:
+        id:
+          type: integer
+        platform:
+          type: string
+        handle:
+          type: string
+        profile_url:
+          type: string
+          nullable: true
+        name:
+          type: string
+          nullable: true
+        city_name:
+          type: string
+          nullable: true
+        country_name:
+          type: string
+          nullable: true
+        niche:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [discovered, contacted, follow_up, interested, approved, rejected, ghosted, archived]
+        source:
+          type: string
+          nullable: true
+    CreatorLeadInput:
+      type: object
+      required: [platform, handle]
+      properties:
+        platform:
+          type: string
+        handle:
+          type: string
+        profile_url:
+          type: string
+          nullable: true
+        name:
+          type: string
+          nullable: true
+        niche:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [discovered, contacted, follow_up, interested, approved, rejected, ghosted, archived]
+          nullable: true
+        source:
+          type: string
+          nullable: true
+    Creator:
+      type: object
+      required: [id, name, status]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        username:
+          type: string
+          nullable: true
+        email:
+          type: string
+          nullable: true
+        phone:
+          type: string
+          nullable: true
+        bio:
+          type: string
+          nullable: true
+        ugc_only:
+          type: boolean
+        accepts_barter:
+          type: boolean
+        status:
+          type: string
+          enum: [active, inactive, paused, blacklisted]
+        rating:
+          type: integer
+          nullable: true
+        cities:
+          type: array
+          items:
+            $ref: '#/components/schemas/City'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+        social_accounts:
+          type: array
+          items:
+            $ref: '#/components/schemas/SocialAccount'
+    CreatorInput:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        username:
+          type: string
+          nullable: true
+        email:
+          type: string
+          nullable: true
+        phone:
+          type: string
+          nullable: true
+        bio:
+          type: string
+          nullable: true
+        ugc_only:
+          type: boolean
+          nullable: true
+        accepts_barter:
+          type: boolean
+          nullable: true
+        status:
+          type: string
+          enum: [active, inactive, paused, blacklisted]
+          nullable: true
+        rating:
+          type: integer
+          nullable: true
+        city_ids:
+          type: array
+          items:
+            type: integer
+        tag_ids:
+          type: array
+          items:
+            type: integer
+    SocialAccount:
+      type: object
+      required: [id, accountable_type, accountable_id, platform, handle, is_primary]
+      properties:
+        id:
+          type: integer
+        accountable_type:
+          type: string
+        accountable_id:
+          type: integer
+        platform:
+          type: string
+        handle:
+          type: string
+        url:
+          type: string
+          nullable: true
+        is_primary:
+          type: boolean
+    SocialAccountInput:
+      type: object
+      required: [accountable_type, accountable_id, platform, handle]
+      properties:
+        accountable_type:
+          type: string
+        accountable_id:
+          type: integer
+        platform:
+          type: string
+        handle:
+          type: string
+        url:
+          type: string
+          nullable: true
+        is_primary:
+          type: boolean
+          nullable: true
+    Campaign:
+      type: object
+      required: [id, brand_id, name, status]
+      properties:
+        id:
+          type: integer
+        brand_id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        objective:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [draft, active, paused, completed, cancelled]
+        starts_at:
+          type: string
+          format: date-time
+          nullable: true
+        ends_at:
+          type: string
+          format: date-time
+          nullable: true
+        compensation_type:
+          type: string
+          nullable: true
+        requirements:
+          type: string
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+        brand:
+          $ref: '#/components/schemas/Brand'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/Tag'
+    CampaignInput:
+      type: object
+      required: [brand_id, name]
+      properties:
+        brand_id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+          nullable: true
+        objective:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [draft, active, paused, completed, cancelled]
+          nullable: true
+        starts_at:
+          type: string
+          format: date-time
+          nullable: true
+        ends_at:
+          type: string
+          format: date-time
+          nullable: true
+        compensation_type:
+          type: string
+          nullable: true
+        requirements:
+          type: string
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+        tag_ids:
+          type: array
+          items:
+            type: integer
