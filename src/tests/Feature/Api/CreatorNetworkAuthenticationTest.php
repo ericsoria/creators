@@ -11,7 +11,7 @@ class CreatorNetworkAuthenticationTest extends TestCase
 
     public function test_creator_network_endpoints_reject_unauthenticated_requests(): void
     {
-        foreach (['/api/v1/creator-leads', '/api/v1/creators', '/api/v1/social-accounts'] as $endpoint) {
+        foreach (['/api/v1/prospects', '/api/v1/creators', '/api/v1/social-accounts'] as $endpoint) {
             $this->getJson($endpoint)
                 ->assertUnauthorized()
                 ->assertJson(['message' => 'Unauthenticated.']);

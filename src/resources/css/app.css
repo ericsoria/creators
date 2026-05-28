@@ -4,8 +4,93 @@
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
 @source '../**/*.js';
+@source '../**/*.vue';
 
 @theme {
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+
+    --color-ops-bg: #f7f3ec;
+    --color-ops-surface: #fffdf8;
+    --color-ops-text: #171512;
+    --color-ops-muted: #6f6a61;
+    --color-ops-border: #e4ded2;
+    --color-ops-primary: #111111;
+    --color-ops-success: #2f6b4f;
+    --color-ops-danger: #a33a2b;
+    --color-ops-attention: #9a3412;
+}
+
+@layer base {
+    html {
+        background: #f7f3ec;
+        color: #171512;
+    }
+
+    body {
+        min-height: 100vh;
+        margin: 0;
+        font-family: var(--font-sans);
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+        font: inherit;
+    }
+
+    :focus-visible {
+        outline: 2px solid #111111;
+        outline-offset: 2px;
+    }
+}
+
+@layer components {
+    .ops-card {
+        border: 1px solid #e4ded2;
+        background: #fffdf8;
+        box-shadow: 0 1px 0 rgb(23 21 18 / 0.04);
+    }
+
+    .ops-input {
+        width: 100%;
+        border-radius: 0.75rem;
+        border: 1px solid #e4ded2;
+        background: #fffdf8;
+        padding: 0.625rem 0.75rem;
+        color: #171512;
+    }
+
+    .ops-input:disabled {
+        cursor: not-allowed;
+        opacity: 0.65;
+    }
+
+    .ops-label {
+        display: block;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: #6f6a61;
+    }
+
+    .ops-table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+    }
 }

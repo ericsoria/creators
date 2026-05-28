@@ -87,23 +87,25 @@ Relationships:
 
 - `belongsTo Brand`
 - `belongsToMany Tag`
+- `hasMany Opportunity`
 
 Campaigns use soft deletes.
 
-## CreatorLead
+## Prospect
 
-Discovered creator profile that has not yet joined the private network.
+Discovered creator or brand profile that has not yet become a managed creator or brand record.
 
 Fields:
 
 - `id`
+- `prospect_type`
 - `platform`
 - `handle`
 - `profile_url`
 - `name`
 - `city_name`
 - `country_name`
-- `niche`
+- `category`
 - `status`
 - `contacted_at`
 - `responded_at`
@@ -123,7 +125,9 @@ Statuses:
 - `ghosted`
 - `archived`
 
-Creator leads use soft deletes.
+Allowed prospect types are `creator` and `brand`.
+
+Prospects use soft deletes. Creator prospect approval creates a creator and optional initial creator social account. Brand prospect approval creates a brand and optional initial brand social account.
 
 ## Creator
 
@@ -157,6 +161,7 @@ Relationships:
 - `belongsToMany City`
 - `belongsToMany Tag`
 - `morphMany SocialAccount`
+- `hasMany Opportunity`
 
 Creators use soft deletes.
 
@@ -179,3 +184,76 @@ Relationships:
 - `morphTo accountable`
 
 Social accounts use soft deletes. An owner can have one primary account per platform.
+
+## Opportunity
+
+Campaign-to-creator outreach record. An opportunity means a specific campaign has been offered or prepared for a specific creator; it is not yet a confirmed collaboration.
+
+Fields:
+
+- `id`
+- `campaign_id`
+- `creator_id`
+- `status`
+- `channel`
+- `source_account`
+- `message_template`
+- `first_contacted_at`
+- `last_contacted_at`
+- `responded_at`
+- `follow_up_count`
+- `rejection_reason`
+- `notes`
+- `assigned_to`
+- `converted_to_collaboration_id`
+
+Statuses:
+
+- `draft`
+- `contacted`
+- `follow_up`
+- `interested`
+- `accepted`
+- `rejected`
+- `ghosted`
+- `expired`
+- `cancelled`
+
+Relationships:
+
+- `belongsTo Campaign`
+- `belongsTo Creator`
+- `belongsTo User` as assigned user
+- `hasMany OpportunityEvent`
+
+Opportunities use soft deletes. The system prevents duplicate active opportunities for the same campaign and creator pair.
+
+## OpportunityEvent
+
+Append-only operational timeline entry for an opportunity.
+
+Fields:
+
+- `id`
+- `opportunity_id`
+- `type`
+- `old_status`
+- `new_status`
+- `message`
+- `metadata`
+- `created_by`
+
+Event types:
+
+- `contacted`
+- `follow_up_sent`
+- `creator_replied`
+- `accepted`
+- `rejected`
+- `ghosted`
+- `note`
+
+Relationships:
+
+- `belongsTo Opportunity`
+- `belongsTo User` as created user

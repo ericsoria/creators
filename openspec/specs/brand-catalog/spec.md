@@ -57,3 +57,25 @@ The system SHALL require Sanctum authentication for all brand catalog endpoints.
 #### Scenario: Unauthenticated brand request
 - **WHEN** an unauthenticated client requests a brand endpoint
 - **THEN** the system SHALL return an unauthorized JSON response
+
+### Requirement: Brand social account ownership
+The system SHALL allow brands to own social accounts through the shared social account model.
+
+#### Scenario: Brand has social accounts
+- **WHEN** an authenticated internal user retrieves a brand with social accounts loaded
+- **THEN** the response SHALL be able to include social accounts owned by that brand
+
+#### Scenario: Brand social accounts do not change brand catalog behavior
+- **WHEN** an authenticated internal user uses existing brand catalog endpoints without requesting social account data
+- **THEN** existing brand catalog response behavior SHALL remain compatible
+
+### Requirement: Brand prospect approval source
+The system SHALL allow brands to be created from approved prospects with `prospect_type` of `brand`.
+
+#### Scenario: Brand originates from prospect
+- **WHEN** an authenticated internal user approves an eligible brand prospect
+- **THEN** the created brand SHALL use prospect and approval data for its initial fields
+
+#### Scenario: Brand approval creates social account
+- **WHEN** an approved brand prospect has platform and handle data
+- **THEN** the created brand SHALL receive an initial social account from that prospect data

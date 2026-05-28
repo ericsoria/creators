@@ -35,3 +35,14 @@ The system SHALL provide seed data for common MVP cities and tags.
 #### Scenario: Seed taxonomy data
 - **WHEN** database seeders run in a local or MVP environment
 - **THEN** the system SHALL create initial cities and tags without duplicating existing records
+
+### Requirement: Creator taxonomy classification
+The system SHALL allow existing cities and tags to classify creators in addition to brands and campaigns.
+
+#### Scenario: City classifies creators
+- **WHEN** a creator is associated with a city
+- **THEN** the city SHALL be usable to filter and retrieve creators in that location
+
+#### Scenario: Tag classifies creators
+- **WHEN** a creator is associated with a tag
+- **THEN** the tag SHALL be usable to filter and retrieve creators in that taxonomy group

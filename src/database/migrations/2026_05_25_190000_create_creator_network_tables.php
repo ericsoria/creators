@@ -8,15 +8,16 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('creator_leads', function (Blueprint $table) {
+        Schema::create('prospects', function (Blueprint $table) {
             $table->id();
+            $table->string('prospect_type')->default('creator')->index();
             $table->string('platform')->index();
             $table->string('handle')->index();
             $table->string('profile_url')->nullable();
             $table->string('name')->nullable();
             $table->string('city_name')->nullable();
             $table->string('country_name')->nullable();
-            $table->string('niche')->nullable()->index();
+            $table->string('category')->nullable()->index();
             $table->string('status')->default('discovered')->index();
             $table->timestamp('contacted_at')->nullable()->index();
             $table->timestamp('responded_at')->nullable()->index();
@@ -78,6 +79,6 @@ return new class extends Migration
         Schema::dropIfExists('creator_city');
         Schema::dropIfExists('social_accounts');
         Schema::dropIfExists('creators');
-        Schema::dropIfExists('creator_leads');
+        Schema::dropIfExists('prospects');
     }
 };

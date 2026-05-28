@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\City;
 use App\Models\Creator;
-use App\Models\CreatorLead;
+use App\Models\Prospect;
 use App\Models\Tag;
 use Illuminate\Database\Seeder;
 
@@ -16,15 +16,16 @@ class DemoCreatorNetworkSeeder extends Seeder
             return;
         }
 
-        $lead = CreatorLead::query()->firstOrCreate(
+        $prospect = Prospect::query()->firstOrCreate(
             ['platform' => 'instagram', 'handle' => 'demo_creator_lead'],
             [
+                'prospect_type' => Prospect::TYPE_CREATOR,
                 'profile_url' => 'https://instagram.com/demo_creator_lead',
                 'name' => 'Demo Creator Lead',
                 'city_name' => 'Barcelona',
                 'country_name' => 'Spain',
-                'niche' => 'food',
-                'status' => CreatorLead::STATUS_DISCOVERED,
+                'category' => 'food',
+                'status' => Prospect::STATUS_DISCOVERED,
                 'source' => 'manual',
             ],
         );
@@ -38,7 +39,7 @@ class DemoCreatorNetworkSeeder extends Seeder
                 'accepts_barter' => true,
                 'status' => Creator::STATUS_ACTIVE,
                 'joined_at' => now(),
-                'notes' => $lead->notes,
+                'notes' => $prospect->notes,
             ],
         );
 

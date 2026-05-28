@@ -27,3 +27,16 @@
 - Added creator lead approval flow that creates creators and initial social accounts.
 - Added creator city/tag relationships and brand/creator social account ownership.
 - Added creator network filters, pagination, tests, OpenAPI documentation, and domain documentation.
+- Added a Vue 3 + Tailwind operations SPA served at `/app`.
+- Added API token login/logout endpoints for the SPA.
+- Added drawer-first CRUD/list screens for catalog and creator network records.
+- Added `src/docs/ui.md` with design tokens, accessibility rules, and externalization guidance.
+- Added opportunity pipeline and opportunity event API for campaign-to-creator outreach.
+
+## 2026-05-28
+
+### Changed
+
+- Replaced creator lead recruiting with shared prospect leads for creator and brand prospects.
+- Replaced `/api/v1/creator-leads` with `/api/v1/prospects` and type-specific approval endpoints.
+- Renamed lead classification from `niche` to `category` and added `prospect_type`.

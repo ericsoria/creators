@@ -8,6 +8,41 @@ servers:
 security:
   - sanctumBearer: []
 paths:
+  /auth/login:
+    post:
+      summary: Issue an operations UI API token
+      operationId: loginForApiToken
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginInput'
+      responses:
+        '200':
+          description: API token issued.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /auth/logout:
+    post:
+      summary: Revoke current operations UI API token
+      operationId: logoutApiToken
+      security:
+        - sanctumBearer: []
+      responses:
+        '200':
+          description: Current token revoked.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
   /user:
     get:
       summary: Get current authenticated user
@@ -295,24 +330,44 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
-  /creator-leads:
+  /prospects:
     get:
-      summary: List creator leads
-      operationId: listCreatorLeads
+      summary: List prospects
+      operationId: listProspects
       security:
         - sanctumBearer: []
+      parameters:
+        - name: prospect_type
+          in: query
+          schema:
+            type: string
+            enum: [creator, brand]
+        - $ref: '#/components/parameters/StatusFilter'
+        - name: platform
+          in: query
+          schema:
+            type: string
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: source
+          in: query
+          schema:
+            type: string
+        - $ref: '#/components/parameters/PerPageFilter'
       responses:
         '200':
-          description: Paginated creator leads returned.
+          description: Paginated prospects returned.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CreatorLeadPaginatedResponse'
+                $ref: '#/components/schemas/ProspectPaginatedResponse'
         '401':
           $ref: '#/components/responses/Unauthorized'
     post:
-      summary: Create creator lead
-      operationId: createCreatorLead
+      summary: Create prospect
+      operationId: createProspect
       security:
         - sanctumBearer: []
       requestBody:
@@ -320,57 +375,57 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreatorLeadInput'
+              $ref: '#/components/schemas/ProspectInput'
       responses:
         '201':
-          description: Creator lead created.
+          description: Prospect created.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CreatorLeadResponse'
+                $ref: '#/components/schemas/ProspectResponse'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '422':
           $ref: '#/components/responses/ValidationError'
-  /creator-leads/{creator_lead}:
+  /prospects/{prospect}:
     get:
-      summary: Get creator lead
-      operationId: getCreatorLead
+      summary: Get prospect
+      operationId: getProspect
       security:
         - sanctumBearer: []
       parameters:
-        - $ref: '#/components/parameters/CreatorLeadPath'
+        - $ref: '#/components/parameters/ProspectPath'
       responses:
         '200':
-          description: Creator lead returned.
+          description: Prospect returned.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CreatorLeadResponse'
+                $ref: '#/components/schemas/ProspectResponse'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
     patch:
-      summary: Update creator lead
-      operationId: updateCreatorLead
+      summary: Update prospect
+      operationId: updateProspect
       security:
         - sanctumBearer: []
       parameters:
-        - $ref: '#/components/parameters/CreatorLeadPath'
+        - $ref: '#/components/parameters/ProspectPath'
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreatorLeadInput'
+              $ref: '#/components/schemas/ProspectInput'
       responses:
         '200':
-          description: Creator lead updated.
+          description: Prospect updated.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CreatorLeadResponse'
+                $ref: '#/components/schemas/ProspectResponse'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
@@ -378,34 +433,53 @@ paths:
         '422':
           $ref: '#/components/responses/ValidationError'
     delete:
-      summary: Delete creator lead
-      operationId: deleteCreatorLead
+      summary: Delete prospect
+      operationId: deleteProspect
       security:
         - sanctumBearer: []
       parameters:
-        - $ref: '#/components/parameters/CreatorLeadPath'
+        - $ref: '#/components/parameters/ProspectPath'
       responses:
         '204':
-          description: Creator lead soft deleted.
+          description: Prospect soft deleted.
         '401':
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
-  /creator-leads/{creator_lead}/approve:
+  /prospects/{prospect}/approve-as-creator:
     post:
-      summary: Approve creator lead
-      operationId: approveCreatorLead
+      summary: Approve prospect as creator
+      operationId: approveProspectAsCreator
       security:
         - sanctumBearer: []
       parameters:
-        - $ref: '#/components/parameters/CreatorLeadPath'
+        - $ref: '#/components/parameters/ProspectPath'
       responses:
         '201':
-          description: Creator created from lead.
+          description: Creator created from prospect.
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/CreatorResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /prospects/{prospect}/approve-as-brand:
+    post:
+      summary: Approve prospect as brand
+      operationId: approveProspectAsBrand
+      security:
+        - sanctumBearer: []
+      parameters:
+        - $ref: '#/components/parameters/ProspectPath'
+      responses:
+        '201':
+          description: Brand created from prospect.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BrandResponse'
         '401':
           $ref: '#/components/responses/Unauthorized'
         '422':
@@ -602,6 +676,206 @@ paths:
           $ref: '#/components/responses/Unauthorized'
         '404':
           $ref: '#/components/responses/NotFound'
+  /opportunities:
+    get:
+      summary: List opportunities
+      operationId: listOpportunities
+      security:
+        - sanctumBearer: []
+      parameters:
+        - name: campaign
+          in: query
+          schema: { type: integer }
+        - name: creator
+          in: query
+          schema: { type: integer }
+        - name: status
+          in: query
+          schema: { type: string, enum: [draft, contacted, follow_up, interested, accepted, rejected, ghosted, expired, cancelled] }
+        - name: channel
+          in: query
+          schema: { type: string }
+        - name: assigned_to
+          in: query
+          schema: { type: integer }
+        - name: responded
+          in: query
+          schema: { type: boolean }
+        - name: first_contacted_at
+          in: query
+          schema: { type: string, format: date }
+        - name: last_contacted_at
+          in: query
+          schema: { type: string, format: date }
+        - $ref: '#/components/parameters/PerPageFilter'
+      responses:
+        '200':
+          description: Paginated opportunities returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpportunityPaginatedResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    post:
+      summary: Create opportunity
+      operationId: createOpportunity
+      security:
+        - sanctumBearer: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpportunityInput'
+      responses:
+        '201':
+          description: Opportunity created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpportunityResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /opportunities/{opportunity}:
+    get:
+      summary: Get opportunity
+      operationId: getOpportunity
+      security:
+        - sanctumBearer: []
+      parameters:
+        - $ref: '#/components/parameters/OpportunityPath'
+      responses:
+        '200':
+          description: Opportunity returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpportunityResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    patch:
+      summary: Update opportunity
+      operationId: updateOpportunity
+      security:
+        - sanctumBearer: []
+      parameters:
+        - $ref: '#/components/parameters/OpportunityPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpportunityInput'
+      responses:
+        '200':
+          description: Opportunity updated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpportunityResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+    delete:
+      summary: Delete opportunity
+      operationId: deleteOpportunity
+      security:
+        - sanctumBearer: []
+      parameters:
+        - $ref: '#/components/parameters/OpportunityPath'
+      responses:
+        '204':
+          description: Opportunity soft deleted.
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /opportunities/{opportunity}/accept:
+    post:
+      summary: Accept opportunity
+      operationId: acceptOpportunity
+      security:
+        - sanctumBearer: []
+      parameters:
+        - $ref: '#/components/parameters/OpportunityPath'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                message: { type: string, nullable: true }
+                metadata: { type: object, nullable: true }
+      responses:
+        '200':
+          description: Opportunity accepted.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpportunityResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
+  /opportunities/{opportunity}/events:
+    get:
+      summary: List opportunity events
+      operationId: listOpportunityEvents
+      security:
+        - sanctumBearer: []
+      parameters:
+        - $ref: '#/components/parameters/OpportunityPath'
+        - $ref: '#/components/parameters/PerPageFilter'
+      responses:
+        '200':
+          description: Paginated opportunity events returned.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpportunityEventPaginatedResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+    post:
+      summary: Create opportunity event
+      operationId: createOpportunityEvent
+      security:
+        - sanctumBearer: []
+      parameters:
+        - $ref: '#/components/parameters/OpportunityPath'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OpportunityEventInput'
+      responses:
+        '201':
+          description: Opportunity event created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OpportunityEventResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '422':
+          $ref: '#/components/responses/ValidationError'
 components:
   securitySchemes:
     sanctumBearer:
@@ -621,8 +895,8 @@ components:
       required: true
       schema:
         type: integer
-    CreatorLeadPath:
-      name: creator_lead
+    ProspectPath:
+      name: prospect
       in: path
       required: true
       schema:
@@ -635,6 +909,12 @@ components:
         type: integer
     SocialAccountPath:
       name: social_account
+      in: path
+      required: true
+      schema:
+        type: integer
+    OpportunityPath:
+      name: opportunity
       in: path
       required: true
       schema:
@@ -721,6 +1001,38 @@ components:
               errors:
                 type: object
   schemas:
+    LoginInput:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+    LoginResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: object
+          required: [token, user]
+          properties:
+            token:
+              type: string
+            user:
+              $ref: '#/components/schemas/User'
+    MessageResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          type: object
+          required: [message]
+          properties:
+            message:
+              type: string
     UserResponse:
       type: object
       required: [data]
@@ -769,12 +1081,12 @@ components:
           type: object
         links:
           type: object
-    CreatorLeadResponse:
+    ProspectResponse:
       type: object
       required: [data]
       properties:
         data:
-          $ref: '#/components/schemas/CreatorLead'
+          $ref: '#/components/schemas/Prospect'
     CreatorResponse:
       type: object
       required: [data]
@@ -787,14 +1099,14 @@ components:
       properties:
         data:
           $ref: '#/components/schemas/SocialAccount'
-    CreatorLeadPaginatedResponse:
+    ProspectPaginatedResponse:
       type: object
       required: [data, meta, links]
       properties:
         data:
           type: array
           items:
-            $ref: '#/components/schemas/CreatorLead'
+            $ref: '#/components/schemas/Prospect'
         meta:
           type: object
         links:
@@ -823,6 +1135,185 @@ components:
           type: object
         links:
           type: object
+    OpportunityResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: '#/components/schemas/Opportunity'
+    OpportunityEventResponse:
+      type: object
+      required: [data]
+      properties:
+        data:
+          $ref: '#/components/schemas/OpportunityEvent'
+    OpportunityPaginatedResponse:
+      type: object
+      required: [data, meta, links]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Opportunity'
+        meta:
+          type: object
+        links:
+          type: object
+    OpportunityEventPaginatedResponse:
+      type: object
+      required: [data, meta, links]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/OpportunityEvent'
+        meta:
+          type: object
+        links:
+          type: object
+    Opportunity:
+      type: object
+      required: [id, campaign_id, creator_id, status]
+      properties:
+        id:
+          type: integer
+        campaign_id:
+          type: integer
+        creator_id:
+          type: integer
+        status:
+          type: string
+          enum: [draft, contacted, follow_up, interested, accepted, rejected, ghosted, expired, cancelled]
+        channel:
+          type: string
+          nullable: true
+        source_account:
+          type: string
+          nullable: true
+        message_template:
+          type: string
+          nullable: true
+        first_contacted_at:
+          type: string
+          format: date-time
+          nullable: true
+        last_contacted_at:
+          type: string
+          format: date-time
+          nullable: true
+        responded_at:
+          type: string
+          format: date-time
+          nullable: true
+        follow_up_count:
+          type: integer
+        rejection_reason:
+          type: string
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+        assigned_to:
+          type: integer
+          nullable: true
+        converted_to_collaboration_id:
+          type: integer
+          nullable: true
+    OpportunityInput:
+      type: object
+      required: [campaign_id, creator_id]
+      properties:
+        campaign_id:
+          type: integer
+        creator_id:
+          type: integer
+        status:
+          type: string
+          enum: [draft, contacted, follow_up, interested, accepted, rejected, ghosted, expired, cancelled]
+          nullable: true
+        channel:
+          type: string
+          nullable: true
+        source_account:
+          type: string
+          nullable: true
+        message_template:
+          type: string
+          nullable: true
+        first_contacted_at:
+          type: string
+          format: date-time
+          nullable: true
+        last_contacted_at:
+          type: string
+          format: date-time
+          nullable: true
+        responded_at:
+          type: string
+          format: date-time
+          nullable: true
+        follow_up_count:
+          type: integer
+          nullable: true
+        rejection_reason:
+          type: string
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+        assigned_to:
+          type: integer
+          nullable: true
+        converted_to_collaboration_id:
+          type: integer
+          nullable: true
+    OpportunityEvent:
+      type: object
+      required: [id, opportunity_id, type]
+      properties:
+        id:
+          type: integer
+        opportunity_id:
+          type: integer
+        type:
+          type: string
+          enum: [contacted, follow_up_sent, creator_replied, accepted, rejected, ghosted, note]
+        old_status:
+          type: string
+          nullable: true
+        new_status:
+          type: string
+          nullable: true
+        message:
+          type: string
+          nullable: true
+        metadata:
+          type: object
+          nullable: true
+        created_by:
+          type: integer
+          nullable: true
+    OpportunityEventInput:
+      type: object
+      required: [type]
+      properties:
+        type:
+          type: string
+          enum: [contacted, follow_up_sent, creator_replied, accepted, rejected, ghosted, note]
+        old_status:
+          type: string
+          enum: [draft, contacted, follow_up, interested, accepted, rejected, ghosted, expired, cancelled]
+          nullable: true
+        new_status:
+          type: string
+          enum: [draft, contacted, follow_up, interested, accepted, rejected, ghosted, expired, cancelled]
+          nullable: true
+        message:
+          type: string
+          nullable: true
+        metadata:
+          type: object
+          nullable: true
     User:
       type: object
       required: [id, name, email, role]
@@ -940,12 +1431,15 @@ components:
           type: array
           items:
             type: integer
-    CreatorLead:
+    Prospect:
       type: object
-      required: [id, platform, handle, status]
+      required: [id, prospect_type, platform, handle, status]
       properties:
         id:
           type: integer
+        prospect_type:
+          type: string
+          enum: [creator, brand]
         platform:
           type: string
         handle:
@@ -962,7 +1456,7 @@ components:
         country_name:
           type: string
           nullable: true
-        niche:
+        category:
           type: string
           nullable: true
         status:
@@ -971,10 +1465,13 @@ components:
         source:
           type: string
           nullable: true
-    CreatorLeadInput:
+    ProspectInput:
       type: object
-      required: [platform, handle]
+      required: [prospect_type, platform, handle]
       properties:
+        prospect_type:
+          type: string
+          enum: [creator, brand]
         platform:
           type: string
         handle:
@@ -985,7 +1482,7 @@ components:
         name:
           type: string
           nullable: true
-        niche:
+        category:
           type: string
           nullable: true
         status:
